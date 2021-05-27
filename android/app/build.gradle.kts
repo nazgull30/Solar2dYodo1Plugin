@@ -181,10 +181,10 @@ if (configureCoronaPlugins == "YES") {
 //</editor-fold>
 
 android {
-    compileSdkVersion(29)
+    compileSdkVersion(30)
     defaultConfig {
         applicationId = coronaAppPackage
-        targetSdkVersion(29)
+        targetSdkVersion(30)
         minSdkVersion(extra["minSdkVersion"] as Int)
         versionCode = coronaVersionCode
         versionName = coronaVersionName
@@ -469,7 +469,7 @@ android.applicationVariants.all {
 }
 
 fun downloadAndProcessCoronaPlugins(reDownloadPlugins: Boolean = true) {
-
+    
     val luaVerbosityPlug = if (!logger.isLifecycleEnabled) {
         arrayOf("-e", "printError=print;print=function()end")
     } else {
