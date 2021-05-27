@@ -1,0 +1,41 @@
+settings =
+{
+	orientation =
+	{
+		default = "portrait",
+		supported = { "portrait", "landscapeLeft", "landscapeRight" }
+	},
+
+	iphone =
+	{
+		xcassets = "Images.xcassets",
+		plist =
+		{
+			GADApplicationIdentifier = "ca-app-pub-3940256099942544~1458002511",
+			UILaunchStoryboardName = "LaunchScreen",
+			NSAppTransportSecurity = { NSAllowsArbitraryLoads=true },
+		}
+	},
+
+	android =
+	{
+        applicationChildElements =
+        {
+            [[
+                <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID"
+                    android:value="ca-app-pub-7897780601981890~1957125968"/>
+            ]],
+        },
+
+		usesPermissions =
+		{
+			"android.permission.INTERNET",
+			"android.permission.ACCESS_NETWORK_STATE"
+		}
+	},
+
+	plugins =
+	{
+		["plugin.rivendell"] = { publisherId = "com.yodo1" },
+	}
+}

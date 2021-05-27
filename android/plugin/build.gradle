@@ -1,0 +1,48 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 29
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+    }
+}
+
+afterEvaluate {
+    generateReleaseBuildConfig.enabled = false
+    generateDebugBuildConfig.enabled = false
+}
+
+dependencies {
+    implementation ':Corona@aar'
+    implementation 'com.google.android.gms:play-services-ads:19.6.0'
+}
+
+task exportAARToThePluginBinary {
+    dependsOn assemble
+    doLast {
+        copy {
+            from {
+                zipTree("$buildDir/outputs/aar/${project.name}-release.aar").matching {
+                    include 'classes.jar'
+                }.singleFile
+            }
+            into "../../../plugins/2020.3607/android/"
+            rename "classes.jar", "plugin.admob.jar"
+        }
+    }
+}
+
+task createDataTgz(type: Tar) {
+    group 'Corona'
+    from "../../../plugins/2020.3607/android/"
+    destinationDirectory = file("$buildDir/outputs")
+    archiveFileName = 'data.tgz'
+    compression = Compression.GZIP
+    dependsOn exportAARToThePluginBinary
+}
+
+assemble.finalizedBy(createDataTgz)
