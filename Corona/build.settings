@@ -11,7 +11,7 @@ settings =
 		xcassets = "Images.xcassets",
 		plist =
 		{
-			GADApplicationIdentifier = "ca-app-pub-3940256099942544~1458002511",
+			GADApplicationIdentifier = "ca-app-pub-7188592076082444~4705402393",
 			UILaunchStoryboardName = "LaunchScreen",
 			NSAppTransportSecurity = { NSAllowsArbitraryLoads=true },
 		}
@@ -23,7 +23,7 @@ settings =
         {
             [[
                 <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID"
-                    android:value="ca-app-pub-7897780601981890~1957125968"/>
+                    android:value="ca-app-pub-7188592076082444~9384775166"/>
             ]],
         },
 

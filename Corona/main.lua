@@ -15,6 +15,16 @@ local appStatus = {
   useAndroidImmersive = false         -- sets android ui visibility to immersiveSticky to test hidden UI bar
 }
 
+
+BannerAlign = {
+  BANNER_LEFT = 1,
+  BANNER_HORIZONTAL_CENTER = 2,
+  BANNER_RIGHT = 4,
+  BANNER_TOP = 8,
+  BANNER_VERTICAL_CENTER = 16,
+  BANNER_BOTTOM = 32
+}
+
 --------------------------------------------------------------------------
 -- set up UI
 --------------------------------------------------------------------------
@@ -73,11 +83,7 @@ end
 
 -- forward declarations
 local appId = "n/a"
-local adUnits = {}
 local platformName = system.getInfo("platformName")
-local testMode = true
-local testModeButton
-local showTestWarning = true
 local iReady
 local bReady
 local rReady
@@ -85,25 +91,14 @@ local bannerLine
 local oldOrientation
 
 if platformName == "Android" then
-  appId = "ca-app-pub-7897780601981890~1957125968"
-  adUnits = {
-    interstitial="ca-app-pub-7897780601981890/4910592366",
-    rewardedVideo="ca-app-pub-7897780601981890/6354495960",
-    banner="ca-app-pub-7897780601981890/3433859164"
-  }
+  appId = "emXSs0Md7ZC"
 elseif platformName == "iPhone OS" then
-  appId = "ca-app-pub-7897780601981890~3573459965"
-  adUnits = {
-    interstitial="ca-app-pub-7897780601981890/6526926360",
-    rewardedVideo="ca-app-pub-7897780601981890/8003659567",
-    banner="ca-app-pub-7897780601981890/5050193163"
-  }
+  appId = "BkFDs2l8K4k"
 else
   print "Unsupported platform"
 end
 
 print("App ID: "..appId)
-print("Ad Units: "..json.prettify(adUnits))
 
 local admobListener = function(event)
   processEventTable(event)
@@ -120,35 +115,7 @@ local admobListener = function(event)
 end
 
 -- initialize AdMob
-if admob then admob.init(admobListener, {appId=appId, testMode=true, videoAdVolume = 0.1}) end
-
-testModeButton = widget.newButton {
-  label = "Test mode: ON",
-  width = 175,
-  height = 40,
-  labelColor = { default={ 0, 0, 0 }, over={ 0.7, 0.7, 0.7 } },
-  onRelease = function(event)
-    testMode = not testMode
-
-    setRed(iReady)
-    setRed(bReady)
-
-    if testMode then
-      testModeButton:setLabel("Test mode: ON")
-    else
-      testModeButton:setLabel("Test mode: OFF")
-      if showTestWarning then
-        showTestWarning = false
-        native.showAlert(
-        "WARNING!",
-        "Do not click on or interact with live ads!\n"..
-        "Doing so may cause Google to suspend our AdMob account.",
-        { "Got it!" }
-      )
-      end
-    end
-  end
-}
+if admob then admob.init(admobListener, appId) end
 
 local interstitialBG = display.newRect(0,0,320,30)
 
@@ -166,57 +133,26 @@ local rewardedLabel = display.newText {
 }
 rewardedLabel:setTextColor(1)
 
-local loadInterstitialButton = widget.newButton {
-  label = "Load",
-  width = 65,
-  height = 40,
-  labelColor = { default={ 0, 0, 0 }, over={ 0.7, 0.7, 0.7 } },
-  onRelease = function(event)
-    setRed(iReady)
-    admob.load("interstitial", {
-      adUnitId=adUnits.interstitial,
-      testMode=testMode,
-      keywords={"games", "platformer", "toys"},
-      maxAdContentRating="M",
-    })
-  end
-}
-
 local showInterstitialButton = widget.newButton {
-  label = "Show",
+  label = "Show Interstitial Ad",
   width = 65,
   height = 40,
   labelColor = { default={ 0, 0, 0 }, over={ 0.7, 0.7, 0.7 } },
   onRelease = function(event)
     setRed(iReady)
-    admob.show("interstitial")
+    admob.showInterstitialAd()
   end
 }
 
-local loadRewardedButton = widget.newButton {
-  label = "Load",
-  width = 65,
-  height = 40,
-  labelColor = { default={ 0, 0, 0 }, over={ 0.7, 0.7, 0.7 } },
-  onRelease = function(event)
-    admob.setVideoAdVolume( 0.0 )
-    setRed(rReady)
-    admob.load("rewardedVideo", {
-      adUnitId=adUnits.rewardedVideo,
-      testMode=testMode,
-      keywords={"games", "platformer", "toys"}
-    })
-  end
-}
 
 local showRewardedButton = widget.newButton {
-  label = "Show",
+  label = "Show Rewarded Ad",
   width = 65,
   height = 40,
   labelColor = { default={ 0, 0, 0 }, over={ 0.7, 0.7, 0.7 } },
   onRelease = function(event)
     setRed(rReady)
-    admob.show("rewardedVideo")
+    admob.showRewardedAd()
   end
 }
 
@@ -230,24 +166,13 @@ local bannerLabel = display.newText {
 }
 bannerLabel:setTextColor(1)
 
-local loadBannerButton = widget.newButton {
-  label = "Load",
-  width = 100,
-  height = 40,
-  labelColor = { default={ 0, 0, 0 }, over={ 0.7, 0.7, 0.7 } },
-  onRelease = function(event)
-    setRed(bReady)
-    admob.load("banner", {adUnitId=adUnits.banner, testMode=testMode, designedForFamilies=true, childSafe=true, hasUserConsent=false})
-  end
-}
-
 local hideBannerButton = widget.newButton {
   label = "Hide",
   width = 100,
   height = 40,
   labelColor = { default={ 0, 0, 0 }, over={ 0.7, 0.7, 0.7 } },
   onRelease = function(event)
-    admob.hide()
+    admob.dismissBannerAd()
   end
 }
 
@@ -258,11 +183,7 @@ local showBannerButtonT = widget.newButton {
   height = 40,
   labelColor = { default={ 0, 0, 0 }, over={ 0.7, 0.7, 0.7 } },
   onRelease = function(event)
-    if appStatus.customYTest then
-      admob.show("banner", {y=50, bgColor="#444444"})
-    else
-      admob.show("banner", {y="top", bgColor="#444444"})
-    end
+    admob.showBannerAdWithAlign(BannerAlign.BANNER_TOP)
   end
 }
 
@@ -273,25 +194,9 @@ local showBannerButtonB = widget.newButton {
   height = 40,
   labelColor = { default={ 0, 0, 0 }, over={ 0.7, 0.7, 0.7 } },
   onRelease = function(event)
-    if appStatus.customYTest then
-      admob.show("banner", {y=-50, bgColor="#444444" })
-    else
-      admob.show("banner", {y="bottom", bgColor="#444444" })
-    end
+    admob.showBannerAdWithAlign(BannerAlign.BANNER_BOTTOM)
   end
 }
-
-local showBannerButtonBLine = widget.newButton {
-  label = "Under Line",
-  fontSize = 14,
-  width = 100,
-  height = 40,
-  labelColor = { default={ 0, 0, 0 }, over={ 0.7, 0.7, 0.7 } },
-  onRelease = function(event)
-    admob.show("banner", {y=72+math.abs(display.screenOriginY), bgColor="#444444"})
-  end
-}
-
 
 iReady = display.newCircle(10, 10, 6)
 iReady.strokeWidth = 2
@@ -338,9 +243,6 @@ local layoutDisplayObjects = function(orientation)
     eventDataTextBox.y = 2000
   end
 
-  testModeButton.x = display.contentCenterX
-  testModeButton.y = 95
-
   interstitialBG.x, interstitialBG.y = display.contentCenterX, 140
   interstitialBG:setFillColor(1,0,0,0.7)
 
@@ -351,9 +253,6 @@ local layoutDisplayObjects = function(orientation)
   iReady.y = 140
   setRed(iReady)
 
-  loadInterstitialButton.x = display.contentCenterX - 120
-  loadInterstitialButton.y = interstitialLabel.y + 40
-
   showInterstitialButton.x = display.contentCenterX - 50
   showInterstitialButton.y = interstitialLabel.y + 40
 
@@ -363,9 +262,6 @@ local layoutDisplayObjects = function(orientation)
   rReady.x = display.contentCenterX + 140
   rReady.y = 140
   setRed(rReady)
-
-  loadRewardedButton.x = display.contentCenterX + 50
-  loadRewardedButton.y = rewardedLabel.y + 40
 
   showRewardedButton.x = display.contentCenterX + 120
   showRewardedButton.y = rewardedLabel.y + 40
@@ -379,9 +275,6 @@ local layoutDisplayObjects = function(orientation)
   bReady.y = 220
   setRed(bReady)
 
-  loadBannerButton.x = display.contentCenterX - 50
-  loadBannerButton.y = bannerLabel.y + 40
-
   hideBannerButton.x = display.contentCenterX + 50
   hideBannerButton.y = bannerLabel.y + 40
 
@@ -391,8 +284,6 @@ local layoutDisplayObjects = function(orientation)
   showBannerButtonT.x = display.contentCenterX - 100
   showBannerButtonT.y = bannerLabel.y + 80
 
-  showBannerButtonBLine.x = display.contentCenterX + 100
-  showBannerButtonBLine.y = bannerLabel.y + 80
 end
 
 local onOrientationChange = function(event)

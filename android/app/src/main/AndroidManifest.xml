@@ -10,6 +10,6 @@
         tools:replace="android:name, android:label"
         android:resizeableActivity="true">
         <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-7897780601981890~1957125968"/>
+            android:value="ca-app-pub-7188592076082444~9384775166"/>
     </application>
 </manifest>
