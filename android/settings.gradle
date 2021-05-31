@@ -1,2 +1,2 @@
-rootProject.name = "AdMob Plugin"
+rootProject.name = "Rivendell Plugin"
 include("app", "plugin")

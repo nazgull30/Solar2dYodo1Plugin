@@ -31,7 +31,7 @@ task exportAARToThePluginBinary {
                 }.singleFile
             }
             into "../../../plugins/2020.3607/android/"
-            rename "classes.jar", "plugin.admob.jar"
+            rename "classes.jar", "plugin.rivendell.jar"
         }
     }
 }

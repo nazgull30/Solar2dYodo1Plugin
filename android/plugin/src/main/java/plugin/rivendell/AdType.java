@@ -1,4 +1,4 @@
-package plugin.admob;
+package plugin.rivendell;
 
 public enum AdType {
     BANNER("banner"),

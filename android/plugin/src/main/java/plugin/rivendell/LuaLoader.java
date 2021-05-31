@@ -1,13 +1,13 @@
 //
 // LuaLoader.java
-// AdMob Plugin
+// Yodo1 Rivendell Plugin
 //
-// Copyright (c) 2016 CoronaLabs inc. All rights reserved.
+// Copyright (c) 2021 Yodo1. All rights reserved.
 //
 
 // @formatter:off
 
-package plugin.admob;
+package plugin.rivendell;
 
 import android.util.Log;
 import android.view.View;
@@ -39,39 +39,19 @@ import java.util.Map;
 // Plugin imports
 
 /**
- * Implements the Lua interface for the AdMob Plugin.
+ * Implements the Lua interface for the Rivendell Plugin.
  * <p>
  * Only one instance of this class will be created by Corona for the lifetime of the application.
  * This instance will be re-used for every new Corona activity that gets created.
  */
 @SuppressWarnings({"unused", "RedundantSuppression"})
 public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
-    private static final String PLUGIN_NAME = "plugin.admob";
-    private static final String PLUGIN_VERSION = "1.2.6";
+    private static final String PLUGIN_NAME = "plugin.rivendell";
+    private static final String PLUGIN_VERSION = "1.0.0";
     private static final String PLUGIN_SDK_VERSION = "0";//getVersionString();
 
     private static final String EVENT_NAME = "adsRequest";
-    private static final String PROVIDER_NAME = "admob";
-
-
-    // banner alignments
-    private static final String ALIGN_TOP = "top";
-    private static final String ALIGN_BOTTOM = "bottom";
-
-    // event phases
-    private static final String PHASE_INIT = "init";
-    private static final String PHASE_DISPLAYED = "displayed";
-    private static final String PHASE_REFRESHED = "refreshed";
-    private static final String PHASE_HIDDEN = "hidden";
-    private static final String PHASE_LOADED = "loaded";
-    private static final String PHASE_FAILED = "failed";
-    private static final String PHASE_CLOSED = "closed";
-    private static final String PHASE_CLICKED = "clicked";
-    private static final String PHASE_REWARD = "reward";
-
-    // reward keys
-    private static final String REWARD_ITEM = "rewardItem";
-    private static final String REWARD_AMOUNT = "rewardAmount";
+    private static final String PROVIDER_NAME = "rivendell";
 
     // response keys
     private static final String RESPONSE_LOAD_FAILED = "loadFailed";
@@ -92,11 +72,10 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private static final String WARNING_MSG = "WARNING: ";
 
     private static String functionSignature = "";                             // used in error reporting functions
-    private static final Map<String, Object> admobObjects = new HashMap<>();  // keep track of loaded objects
+    private static final Map<String, Object> rivendellObjects = new HashMap<>();  // keep track of loaded objects
 
     // object dictionary keys
     private static final String HAS_RECEIVED_INIT_EVENT_KEY = "hasReceivedInitEvent";
-    private static final String Y_RATIO_KEY = "yRatio";
 
     private static int coronaListener = CoronaLua.REFNIL;
     private static CoronaRuntimeTaskDispatcher coronaRuntimeTaskDispatcher = null;
@@ -123,17 +102,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     // Plugin lifecycle events
     // -------------------------------------------------------
 
-    /**
-     * <p>
-     * Note that a new LuaLoader instance will not be created for every CoronaActivity instance.
-     * That is, only one instance of this class will be created for the lifetime of the application process.
-     * This gives a plugin the option to do operations in the background while the CoronaActivity is destroyed.
-     */
     @SuppressWarnings("unused")
     public LuaLoader() {
-        // Set up this plugin to listen for Corona runtime events to be received by methods
-        // onLoaded(), onStarted(), onSuspended(), onResumed(), and onExiting().
-
         CoronaEnvironment.addRuntimeListener(this);
     }
 
@@ -170,7 +140,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         if (coronaRuntimeTaskDispatcher == null) {
             coronaRuntimeTaskDispatcher = new CoronaRuntimeTaskDispatcher(runtime);
 
-            admobObjects.put(HAS_RECEIVED_INIT_EVENT_KEY, false);
+            rivendellObjects.put(HAS_RECEIVED_INIT_EVENT_KEY, false);
         }
     }
 
@@ -186,9 +156,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             coronaActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    String adUnitId = (String) admobObjects.get(AdType.BANNER.getValue());
+                    String adUnitId = (String) rivendellObjects.get(AdType.BANNER.getValue());
                     if (adUnitId != null) {
-                        AdView banner = (AdView) admobObjects.get(adUnitId);
+                        AdView banner = (AdView) rivendellObjects.get(adUnitId);
                         if (banner != null) {
                             banner.pause();
                         }
@@ -206,9 +176,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             coronaActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    String adUnitId = (String) admobObjects.get(AdType.BANNER.getValue());
+                    String adUnitId = (String) rivendellObjects.get(AdType.BANNER.getValue());
                     if (adUnitId != null) {
-                        AdView banner = (AdView) admobObjects.get(adUnitId);
+                        AdView banner = (AdView) rivendellObjects.get(adUnitId);
                         if (banner != null) {
                             banner.resume();
                         }
@@ -231,7 +201,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                     }
                     coronaListener = CoronaLua.REFNIL;
 
-                    admobObjects.clear();
+                    rivendellObjects.clear();
                     coronaRuntimeTaskDispatcher = null;
                     functionSignature = "";
                 }
@@ -256,11 +226,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private boolean isSDKInitialized() {
         // check to see if SDK is properly initialized
         if (coronaListener == CoronaLua.REFNIL) {
-            logMsg(ERROR_MSG, "admob.init() must be called before calling other API functions");
+            logMsg(ERROR_MSG, "rivendell.init() must be called before calling other API functions");
             return false;
         }
 
-        if (!(boolean) admobObjects.get(HAS_RECEIVED_INIT_EVENT_KEY)) {
+        if (!(boolean) rivendellObjects.get(HAS_RECEIVED_INIT_EVENT_KEY)) {
             logMsg(ERROR_MSG, "You must wait for the 'init' event before calling other API functions");
             return false;
         }
@@ -318,7 +288,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         @Override
         public int invoke(final LuaState luaState) {
-            functionSignature = "admob.init(listener, appId)";
+            functionSignature = "rivendell.init(listener, appId)";
 
             // prevent init from being called twice
             if (coronaListener != CoronaLua.REFNIL) {
@@ -360,18 +330,18 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 @Override
                 public void onMasInitSuccessful() {
                     Log.i(CORONA_TAG, PLUGIN_NAME + ": " + PLUGIN_VERSION + " (SDK: " + PLUGIN_SDK_VERSION + ")");
-                    Log.i(CORONA_TAG, PLUGIN_NAME + "initialize successful");
+                    Log.i(CORONA_TAG, PLUGIN_NAME + " initialize successful");
 
-                    admobObjects.put(HAS_RECEIVED_INIT_EVENT_KEY, true);
+                    rivendellObjects.put(HAS_RECEIVED_INIT_EVENT_KEY, true);
 
                     Map<String, Object> coronaEvent = new HashMap<>();
-                    coronaEvent.put(EVENT_PHASE_KEY, PHASE_INIT);
+                    coronaEvent.put(EVENT_PHASE_KEY, PhaseType.PHASE_INIT);
                     dispatchLuaEvent(coronaEvent);
                 }
 
                 @Override
                 public void onMasInitFailed(@NonNull Yodo1MasError error) {
-                    Log.i(CORONA_TAG, PLUGIN_NAME + "initialize error");
+                    Log.i(CORONA_TAG, PLUGIN_NAME + " initialize error");
 
                     JSONObject data = new JSONObject();
                     try {
@@ -379,7 +349,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                         data.put(DATA_ERRORCODE_KEY, error.getCode());
 
                         Map<String, Object> coronaEvent = new HashMap<>();
-                        coronaEvent.put(EVENT_PHASE_KEY, PHASE_INIT);
+                        coronaEvent.put(EVENT_PHASE_KEY, PhaseType.PHASE_INIT);
                         coronaEvent.put(EVENT_DATA_KEY, data.toString());
                         dispatchLuaEvent(coronaEvent);
                     } catch (Exception e) {
@@ -403,7 +373,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         @Override
         public int invoke(LuaState luaState) {
-            functionSignature = "admob.setGDPR()";
+            functionSignature = "rivendell.setGDPR()";
 
             if (!isSDKInitialized()) {
                 return 0;
@@ -441,7 +411,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         @Override
         public int invoke(LuaState luaState) {
-            functionSignature = "admob.setCCPA()";
+            functionSignature = "rivendell.setCCPA()";
 
             if (!isSDKInitialized()) {
                 return 0;
@@ -479,7 +449,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         @Override
         public int invoke(LuaState luaState) {
-            functionSignature = "admob.setCOPPA()";
+            functionSignature = "rivendell.setCOPPA()";
 
             if (!isSDKInitialized()) {
                 return 0;
@@ -520,7 +490,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         @Override
         public int invoke(final LuaState luaState) {
-            functionSignature = "admob.isBannerAdLoaded()";
+            functionSignature = "rivendell.isBannerAdLoaded()";
 
             if (!isSDKInitialized()) {
                 return 0;
@@ -534,7 +504,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             }
 
             boolean isLoaded = Yodo1Mas.getInstance().isBannerAdLoaded();
-            Log.i(CORONA_TAG, PLUGIN_NAME + "IsBannerLoaded: " + isLoaded);
+            Log.i(CORONA_TAG, PLUGIN_NAME + " IsBannerLoaded: " + isLoaded);
 
             luaState.pushBoolean(isLoaded);
 
@@ -552,7 +522,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         @Override
         public int invoke(final LuaState luaState) {
-            functionSignature = "admob.showBannerAd()";
+            functionSignature = "rivendell.showBannerAd()";
 
             if (!isSDKInitialized()) {
                 return 0;
@@ -572,13 +542,13 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 public void run() {
 
                     boolean isBannerAdLoaded = Yodo1Mas.getInstance().isBannerAdLoaded();
-                    Log.i(CORONA_TAG, PLUGIN_NAME + "IsBannerLoaded: " + isBannerAdLoaded);
+                    Log.i(CORONA_TAG, PLUGIN_NAME + " IsBannerLoaded: " + isBannerAdLoaded);
 
                     if(!isBannerAdLoaded) {
 
                         try {
                             Map<String, Object> coronaEvent = new HashMap<>();
-                            coronaEvent.put(EVENT_PHASE_KEY, PHASE_FAILED);
+                            coronaEvent.put(EVENT_PHASE_KEY, PhaseType.PHASE_FAILED);
                             coronaEvent.put(EVENT_TYPE_KEY, AdType.BANNER.getValue());
                             dispatchLuaEvent(coronaEvent);
                         } catch (Exception e) {
@@ -605,7 +575,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         @Override
         public int invoke(final LuaState luaState) {
-            functionSignature = "admob.showBannerAdWithAlign(align)";
+            functionSignature = "rivendell.showBannerAdWithAlign(align)";
 
             if (!isSDKInitialized()) {
                 return 0;
@@ -636,13 +606,13 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 public void run() {
 
                     boolean isBannerAdLoaded = Yodo1Mas.getInstance().isBannerAdLoaded();
-                    Log.i(CORONA_TAG, PLUGIN_NAME + "IsBannerLoaded: " + isBannerAdLoaded);
+                    Log.i(CORONA_TAG, PLUGIN_NAME + " IsBannerLoaded: " + isBannerAdLoaded);
 
                     if(!isBannerAdLoaded) {
 
                         try {
                             Map<String, Object> coronaEvent = new HashMap<>();
-                            coronaEvent.put(EVENT_PHASE_KEY, PHASE_FAILED);
+                            coronaEvent.put(EVENT_PHASE_KEY, PhaseType.PHASE_FAILED);
                             coronaEvent.put(EVENT_TYPE_KEY, AdType.BANNER.getValue());
                             dispatchLuaEvent(coronaEvent);
                         } catch (Exception e) {
@@ -668,7 +638,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         @Override
         public int invoke(final LuaState luaState) {
-            functionSignature = "admob.showBannerAdWithAlign(align, offsetX, offsetY)";
+            functionSignature = "rivendell.showBannerAdWithAlign(align, offsetX, offsetY)";
 
             if (!isSDKInitialized()) {
                 return 0;
@@ -717,13 +687,13 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 public void run() {
 
                     boolean isBannerAdLoaded = Yodo1Mas.getInstance().isBannerAdLoaded();
-                    Log.i(CORONA_TAG, PLUGIN_NAME + "IsBannerLoaded: " + isBannerAdLoaded);
+                    Log.i(CORONA_TAG, PLUGIN_NAME + " IsBannerLoaded: " + isBannerAdLoaded);
 
                     if(!isBannerAdLoaded) {
 
                         try {
                             Map<String, Object> coronaEvent = new HashMap<>();
-                            coronaEvent.put(EVENT_PHASE_KEY, PHASE_FAILED);
+                            coronaEvent.put(EVENT_PHASE_KEY, PhaseType.PHASE_FAILED);
                             coronaEvent.put(EVENT_TYPE_KEY, AdType.BANNER.getValue());
                             dispatchLuaEvent(coronaEvent);
                         } catch (Exception e) {
@@ -752,7 +722,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         @Override
         public int invoke(final LuaState luaState) {
-            functionSignature = "admob.dismissBannerAd()";
+            functionSignature = "rivendell.dismissBannerAd()";
 
             if (!isSDKInitialized()) {
                 return 0;
@@ -785,7 +755,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         @Override
         public int invoke(final LuaState luaState) {
-            functionSignature = "admob.isInterstitialAdLoaded()";
+            functionSignature = "rivendell.isInterstitialAdLoaded()";
 
             if (!isSDKInitialized()) {
                 return 0;
@@ -799,7 +769,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             }
 
             boolean isLoaded = Yodo1Mas.getInstance().isInterstitialAdLoaded();
-            Log.i(CORONA_TAG, PLUGIN_NAME + "isInterstitialAdLoaded: " + isLoaded);
+            Log.i(CORONA_TAG, PLUGIN_NAME + " isInterstitialAdLoaded: " + isLoaded);
 
             luaState.pushBoolean(isLoaded);
 
@@ -816,7 +786,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         @Override
         public int invoke(final LuaState luaState) {
-            functionSignature = "admob.showInterstitialAd()";
+            functionSignature = "rivendell.showInterstitialAd()";
 
             if (!isSDKInitialized()) {
                 return 0;
@@ -834,13 +804,13 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             coronaActivity.runOnUiThread(() -> {
 
                 boolean isInterstitialAdLoaded = Yodo1Mas.getInstance().isInterstitialAdLoaded();
-                Log.i(CORONA_TAG, PLUGIN_NAME + "isInterstitialAdLoaded: " + isInterstitialAdLoaded);
+                Log.i(CORONA_TAG, PLUGIN_NAME + " isInterstitialAdLoaded: " + isInterstitialAdLoaded);
 
                 if(!isInterstitialAdLoaded) {
 
                     try {
                         Map<String, Object> coronaEvent = new HashMap<>();
-                        coronaEvent.put(EVENT_PHASE_KEY, PHASE_FAILED);
+                        coronaEvent.put(EVENT_PHASE_KEY, PhaseType.PHASE_FAILED);
                         coronaEvent.put(EVENT_TYPE_KEY, AdType.INTERSTITIAL.getValue());
                         dispatchLuaEvent(coronaEvent);
                     } catch (Exception e) {
@@ -868,7 +838,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         @Override
         public int invoke(final LuaState luaState) {
-            functionSignature = "admob.isRewardedAdLoaded()";
+            functionSignature = "rivendell.isRewardedAdLoaded()";
 
             if (!isSDKInitialized()) {
                 return 0;
@@ -882,7 +852,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             }
 
             boolean isLoaded = Yodo1Mas.getInstance().isInterstitialAdLoaded();
-            Log.i(CORONA_TAG, PLUGIN_NAME + "isRewardedAdLoaded: " + isLoaded);
+            Log.i(CORONA_TAG, PLUGIN_NAME + " isRewardedAdLoaded: " + isLoaded);
 
             luaState.pushBoolean(isLoaded);
 
@@ -899,7 +869,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         @Override
         public int invoke(final LuaState luaState) {
-            functionSignature = "admob.showRewardedAd()";
+            functionSignature = "rivendell.showRewardedAd()";
 
             if (!isSDKInitialized()) {
                 return 0;
@@ -917,13 +887,13 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             coronaActivity.runOnUiThread(() -> {
 
                 boolean isRewardedAdLoaded = Yodo1Mas.getInstance().isRewardedAdLoaded();
-                Log.i(CORONA_TAG, PLUGIN_NAME + "isRewardedAdLoaded: " + isRewardedAdLoaded);
+                Log.i(CORONA_TAG, PLUGIN_NAME + " isRewardedAdLoaded: " + isRewardedAdLoaded);
 
                 if(!isRewardedAdLoaded) {
 
                     try {
                         Map<String, Object> coronaEvent = new HashMap<>();
-                        coronaEvent.put(EVENT_PHASE_KEY, PHASE_FAILED);
+                        coronaEvent.put(EVENT_PHASE_KEY, PhaseType.PHASE_FAILED);
                         coronaEvent.put(EVENT_TYPE_KEY, AdType.REWARDED_VIDEO.getValue());
                         dispatchLuaEvent(coronaEvent);
                     } catch (Exception e) {
@@ -947,17 +917,17 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         Yodo1Mas.getInstance().setBannerListener(new Yodo1Mas.BannerListener() {
             @Override
             public void onAdOpened(@NonNull Yodo1MasAdEvent event) {
-                Log.i(CORONA_TAG, PLUGIN_NAME + "Banner onAdOpened");
+                Log.i(CORONA_TAG, PLUGIN_NAME +  "Banner onAdOpened");
 
                 Map<String, Object> coronaEvent = new HashMap<>();
-                coronaEvent.put(EVENT_PHASE_KEY, PHASE_CLICKED);
+                coronaEvent.put(EVENT_PHASE_KEY, PhaseType.PHASE_OPENED);
                 coronaEvent.put(EVENT_TYPE_KEY, AdType.BANNER.getValue());
                 dispatchLuaEvent(coronaEvent);
             }
 
             @Override
             public void onAdError(@NonNull Yodo1MasAdEvent event, @NonNull Yodo1MasError error) {
-                Log.i(CORONA_TAG, PLUGIN_NAME + "Banner onAdError: " + error.getCode());
+                Log.i(CORONA_TAG, PLUGIN_NAME + " Banner onAdError: " + error.getCode());
 
                 JSONObject data = new JSONObject();
                 try {
@@ -965,7 +935,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                     data.put(DATA_ERRORCODE_KEY, error.getCode());
 
                     Map<String, Object> coronaEvent = new HashMap<>();
-                    coronaEvent.put(EVENT_PHASE_KEY, PHASE_FAILED);
+                    coronaEvent.put(EVENT_PHASE_KEY, PhaseType.PHASE_FAILED);
                     coronaEvent.put(EVENT_TYPE_KEY, AdType.BANNER.getValue());
                     coronaEvent.put(CoronaLuaEvent.RESPONSE_KEY, RESPONSE_LOAD_FAILED);
                     coronaEvent.put(EVENT_DATA_KEY, data.toString());
@@ -977,10 +947,10 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
             @Override
             public void onAdClosed(@NonNull Yodo1MasAdEvent event) {
-                Log.i(CORONA_TAG, PLUGIN_NAME + "Banner onAdClosed");
+                Log.i(CORONA_TAG, PLUGIN_NAME + " Banner onAdClosed");
 
                 Map<String, Object> coronaEvent = new HashMap<>();
-                coronaEvent.put(EVENT_PHASE_KEY, PHASE_CLOSED);
+                coronaEvent.put(EVENT_PHASE_KEY, PhaseType.PHASE_CLOSED);
                 coronaEvent.put(EVENT_TYPE_KEY, AdType.BANNER.getValue());
                 dispatchLuaEvent(coronaEvent);
             }
@@ -991,17 +961,17 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         Yodo1Mas.getInstance().setInterstitialListener(new Yodo1Mas.InterstitialListener() {
             @Override
             public void onAdOpened(@NonNull Yodo1MasAdEvent event) {
-                Log.i(CORONA_TAG, PLUGIN_NAME + "Interstitial onAdOpened");
+                Log.i(CORONA_TAG, PLUGIN_NAME + " Interstitial onAdOpened");
 
                 Map<String, Object> coronaEvent = new HashMap<>();
-                coronaEvent.put(EVENT_PHASE_KEY, PHASE_CLICKED);
+                coronaEvent.put(EVENT_PHASE_KEY, PhaseType.PHASE_OPENED);
                 coronaEvent.put(EVENT_TYPE_KEY, AdType.INTERSTITIAL.getValue());
                 dispatchLuaEvent(coronaEvent);
             }
 
             @Override
             public void onAdError(@NonNull Yodo1MasAdEvent event, @NonNull Yodo1MasError error) {
-                Log.i(CORONA_TAG, PLUGIN_NAME + "Interstitial onAdError: " + error.getCode());
+                Log.i(CORONA_TAG, PLUGIN_NAME + " Interstitial onAdError: " + error.getCode());
 
                 JSONObject data = new JSONObject();
                 try {
@@ -1009,7 +979,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                     data.put(DATA_ERRORCODE_KEY, error.getCode());
 
                     Map<String, Object> coronaEvent = new HashMap<>();
-                    coronaEvent.put(EVENT_PHASE_KEY, PHASE_FAILED);
+                    coronaEvent.put(EVENT_PHASE_KEY, PhaseType.PHASE_FAILED);
                     coronaEvent.put(EVENT_TYPE_KEY, AdType.BANNER.getValue());
                     coronaEvent.put(CoronaLuaEvent.RESPONSE_KEY, RESPONSE_LOAD_FAILED);
                     coronaEvent.put(EVENT_DATA_KEY, data.toString());
@@ -1021,10 +991,10 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
             @Override
             public void onAdClosed(@NonNull Yodo1MasAdEvent event) {
-                Log.i(CORONA_TAG, PLUGIN_NAME + "Interstitial onAdClosed");
+                Log.i(CORONA_TAG, PLUGIN_NAME + " Interstitial onAdClosed");
 
                 Map<String, Object> coronaEvent = new HashMap<>();
-                coronaEvent.put(EVENT_PHASE_KEY, PHASE_CLOSED);
+                coronaEvent.put(EVENT_PHASE_KEY, PhaseType.PHASE_CLOSED);
                 coronaEvent.put(EVENT_TYPE_KEY, AdType.BANNER.getValue());
                 dispatchLuaEvent(coronaEvent);
             }
@@ -1035,27 +1005,27 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         Yodo1Mas.getInstance().setRewardListener(new Yodo1Mas.RewardListener() {
             @Override
             public void onAdOpened(@NonNull Yodo1MasAdEvent event) {
-                Log.i(CORONA_TAG, PLUGIN_NAME + "RewardedAd onAdOpened");
+                Log.i(CORONA_TAG, PLUGIN_NAME + " RewardedAd onAdOpened");
 
                 Map<String, Object> coronaEvent = new HashMap<>();
-                coronaEvent.put(EVENT_PHASE_KEY, PHASE_CLICKED);
+                coronaEvent.put(EVENT_PHASE_KEY, PhaseType.PHASE_OPENED);
                 coronaEvent.put(EVENT_TYPE_KEY, AdType.REWARDED_VIDEO.getValue());
                 dispatchLuaEvent(coronaEvent);
             }
 
             @Override
             public void onAdvertRewardEarned(@NonNull Yodo1MasAdEvent event) {
-                Log.i(CORONA_TAG, PLUGIN_NAME + "RewardedAd onAdvertRewardEarned");
+                Log.i(CORONA_TAG, PLUGIN_NAME + " RewardedAd onAdvertRewardEarned");
 
                 Map<String, Object> coronaEvent = new HashMap<>();
-                coronaEvent.put(EVENT_PHASE_KEY, PHASE_REWARD);
+                coronaEvent.put(EVENT_PHASE_KEY, PhaseType.PHASE_REWARD);
                 coronaEvent.put(EVENT_TYPE_KEY, AdType.REWARDED_VIDEO.getValue());
                 dispatchLuaEvent(coronaEvent);
             }
 
             @Override
             public void onAdError(@NonNull Yodo1MasAdEvent event, @NonNull Yodo1MasError error) {
-                Log.i(CORONA_TAG, PLUGIN_NAME + "RewardedAd onAdError: " + error.getCode());
+                Log.i(CORONA_TAG, PLUGIN_NAME + " RewardedAd onAdError: " + error.getCode());
 
                 JSONObject data = new JSONObject();
                 try {
@@ -1063,7 +1033,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                     data.put(DATA_ERRORCODE_KEY, error.getCode());
 
                     Map<String, Object> coronaEvent = new HashMap<>();
-                    coronaEvent.put(EVENT_PHASE_KEY, PHASE_FAILED);
+                    coronaEvent.put(EVENT_PHASE_KEY, PhaseType.PHASE_FAILED);
                     coronaEvent.put(EVENT_TYPE_KEY, AdType.REWARDED_VIDEO.getValue());
                     coronaEvent.put(CoronaLuaEvent.RESPONSE_KEY, RESPONSE_LOAD_FAILED);
                     coronaEvent.put(EVENT_DATA_KEY, data.toString());
@@ -1075,10 +1045,10 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
             @Override
             public void onAdClosed(@NonNull Yodo1MasAdEvent event) {
-                Log.i(CORONA_TAG, PLUGIN_NAME + "RewardedAd onAdClosed");
+                Log.i(CORONA_TAG, PLUGIN_NAME + " RewardedAd onAdClosed");
 
                 Map<String, Object> coronaEvent = new HashMap<>();
-                coronaEvent.put(EVENT_PHASE_KEY, PHASE_CLOSED);
+                coronaEvent.put(EVENT_PHASE_KEY, PhaseType.PHASE_CLOSED);
                 coronaEvent.put(EVENT_TYPE_KEY, AdType.REWARDED_VIDEO.getValue());
                 dispatchLuaEvent(coronaEvent);
             }

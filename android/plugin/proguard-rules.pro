@@ -16,4 +16,4 @@
 #   public *;
 #}
 
--keep public class plugin.admob.LuaLoader { public *;}
+-keep public class plugin.rivendell.LuaLoader { public *;}

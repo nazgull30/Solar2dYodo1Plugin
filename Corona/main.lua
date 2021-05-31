@@ -1,11 +1,11 @@
 --
 --  main.lua
---  AdMob Sample App
+--  Rivendell Sample App
 --
---  Copyright (c) 2016 Corona Labs Inc. All rights reserved.
+--  Copyright (c) 2021 Yodo1. All rights reserved.
 --
 
-local _, admob = pcall(require, "plugin.admob")
+local _, rivendell = pcall(require, "plugin.rivendell")
 
 local widget = require("widget")
 local json = require("json")
@@ -35,9 +35,6 @@ if appStatus.useAndroidImmersive then
   native.setProperty( "androidSystemUiVisibility", "immersiveSticky")
 end
 
-local admobLogo = display.newImage( "admoblogo.png" )
-admobLogo.anchorY = 0
-admobLogo:scale( 0.5, 0.5 )
 
 local setRed = function(self)
   self:setFillColor(1,0,0)
@@ -100,7 +97,7 @@ end
 
 print("App ID: "..appId)
 
-local admobListener = function(event)
+local rivendellListener = function(event)
   processEventTable(event)
 
   if (event.phase == "loaded") then
@@ -114,8 +111,8 @@ local admobListener = function(event)
   end
 end
 
--- initialize AdMob
-if admob then admob.init(admobListener, appId) end
+-- initialize Rivendell
+if rivendell then rivendell.init(rivendellListener, appId) end
 
 local interstitialBG = display.newRect(0,0,320,30)
 
@@ -140,7 +137,7 @@ local showInterstitialButton = widget.newButton {
   labelColor = { default={ 0, 0, 0 }, over={ 0.7, 0.7, 0.7 } },
   onRelease = function(event)
     setRed(iReady)
-    admob.showInterstitialAd()
+    rivendell.showInterstitialAd()
   end
 }
 
@@ -152,7 +149,7 @@ local showRewardedButton = widget.newButton {
   labelColor = { default={ 0, 0, 0 }, over={ 0.7, 0.7, 0.7 } },
   onRelease = function(event)
     setRed(rReady)
-    admob.showRewardedAd()
+    rivendell.showRewardedAd()
   end
 }
 
@@ -172,7 +169,7 @@ local hideBannerButton = widget.newButton {
   height = 40,
   labelColor = { default={ 0, 0, 0 }, over={ 0.7, 0.7, 0.7 } },
   onRelease = function(event)
-    admob.dismissBannerAd()
+    rivendell.dismissBannerAd()
   end
 }
 
@@ -183,7 +180,7 @@ local showBannerButtonT = widget.newButton {
   height = 40,
   labelColor = { default={ 0, 0, 0 }, over={ 0.7, 0.7, 0.7 } },
   onRelease = function(event)
-    admob.showBannerAdWithAlign(BannerAlign.BANNER_TOP)
+    rivendell.showBannerAdWithAlign(BannerAlign.BANNER_TOP)
   end
 }
 
@@ -194,7 +191,7 @@ local showBannerButtonB = widget.newButton {
   height = 40,
   labelColor = { default={ 0, 0, 0 }, over={ 0.7, 0.7, 0.7 } },
   onRelease = function(event)
-    admob.showBannerAdWithAlign(BannerAlign.BANNER_BOTTOM)
+    rivendell.showBannerAdWithAlign(BannerAlign.BANNER_BOTTOM)
   end
 }
 
@@ -218,8 +215,6 @@ setRed(rReady)
 -- --------------------------------------------------------------------------
 
 local layoutDisplayObjects = function(orientation)
-  admobLogo.x, admobLogo.y = display.contentCenterX, 0
-
   if (appStatus.customYTest) then
     r1.x = display.screenOriginX
     r1.y = display.screenOriginY
@@ -296,7 +291,7 @@ local onOrientationChange = function(event)
     else
       if (orientation ~= oldOrientation) then
         oldOrientation = orientation
-        admob.hide()
+        rivendell.hide()
         layoutDisplayObjects(eventType)
       end
     end
