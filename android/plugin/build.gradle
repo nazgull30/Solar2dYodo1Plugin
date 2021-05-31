@@ -4,7 +4,7 @@ android {
     compileSdkVersion 30
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -19,6 +19,7 @@ afterEvaluate {
 dependencies {
     implementation ':Corona@aar'
     implementation 'com.google.android.gms:play-services-ads:19.6.0'
+    implementation 'com.yodo1.mas:full:4.1.0'
 }
 
 task exportAARToThePluginBinary {

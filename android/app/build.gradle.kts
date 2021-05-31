@@ -1,9 +1,5 @@
 import com.android.ide.common.util.toPathString
-import com.beust.klaxon.JsonArray
-import com.beust.klaxon.JsonObject
-import com.beust.klaxon.Klaxon
-import com.beust.klaxon.Parser
-import com.beust.klaxon.lookup
+import com.beust.klaxon.*
 import org.apache.commons.io.output.ByteArrayOutputStream
 import org.apache.tools.ant.filters.StringInputStream
 
@@ -124,7 +120,7 @@ val parsedBuildProperties: JsonObject = run {
 }
 
 extra["minSdkVersion"] = parsedBuildProperties.lookup<Any?>("buildSettings.android.minSdkVersion").firstOrNull()?.toString()?.toIntOrNull()
-        ?: 16
+        ?: 19
 
 val coronaBuilder = if (windows) {
     "$nativeDir/Corona/win/bin/CoronaBuilder.exe"
@@ -469,7 +465,7 @@ android.applicationVariants.all {
 }
 
 fun downloadAndProcessCoronaPlugins(reDownloadPlugins: Boolean = true) {
-    
+
     val luaVerbosityPlug = if (!logger.isLifecycleEnabled) {
         arrayOf("-e", "printError=print;print=function()end")
     } else {

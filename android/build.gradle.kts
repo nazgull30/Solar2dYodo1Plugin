@@ -14,6 +14,12 @@ allprojects {
     repositories {
         google()
         jcenter()
+
+        maven( url = "https://android-sdk.is.com")
+        maven( url = "https://fyber.bintray.com/marketplace")
+        maven( url = "https://dl.bintray.com/yodo1/MAS-Android")
+        maven( url = "https://dl.bintray.com/yodo1/android-sdk")
+
         // maven(url = "https:// some custom repo")
         val nativeDir = if (System.getProperty("os.name").toLowerCase().contains("windows")) {
             System.getenv("CORONA_ROOT")

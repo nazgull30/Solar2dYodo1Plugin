@@ -5,7 +5,8 @@
 --  Copyright (c) 2016 Corona Labs Inc. All rights reserved.
 --
 
-local _, admob = pcall(require, "plugin.rivendell")
+local _, admob = pcall(require, "plugin.admob")
+
 local widget = require("widget")
 local json = require("json")
 
