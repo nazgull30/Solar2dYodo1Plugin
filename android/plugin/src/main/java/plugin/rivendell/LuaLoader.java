@@ -16,6 +16,8 @@ import com.naef.jnlua.JavaFunction;
 import com.naef.jnlua.LuaState;
 import com.naef.jnlua.NamedJavaFunction;
 
+import java.util.List;
+
 // Plugin imports
 
 /**
@@ -43,24 +45,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     @Override
     public int invoke(LuaState L) {
 // Register this plugin into Lua with the following functions.
-        NamedJavaFunction[] luaFunctions = new NamedJavaFunction[]{
-                new Rivendell.SetGDPR(),
-                new Rivendell.SetCCPA(),
-                new Rivendell.SetCOPPA(),
-
-                new Rivendell.Init(),
-
-                new Rivendell.IsBannerAdLoaded(),
-                new Rivendell.ShowBannerAd(),
-                new Rivendell.ShowBannerAdWithAlign(),
-                new Rivendell.DismissBannerAd(),
-
-                new Rivendell.IsInterstitialAdLoaded(),
-                new Rivendell.ShowInterstitialAd(),
-
-                new Rivendell.IsRewardedAdLoaded(),
-                new Rivendell.ShowRewardedAd()
-        };
+        List<NamedJavaFunction> functionList =  this.rivendell.getLuaFunctions();
+        NamedJavaFunction[] luaFunctions = new NamedJavaFunction[functionList.size()];
+        functionList.toArray(luaFunctions);
         String libName = L.toString(1);
         L.register(libName, luaFunctions);
 

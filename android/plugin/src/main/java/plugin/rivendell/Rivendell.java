@@ -149,7 +149,7 @@ public class Rivendell {
         }
     }
 
-    private static void logMsg(String msgType, String errorMsg) {
+    private void logMsg(String msgType, String errorMsg) {
         String functionID = functionSignature;
         if (!functionID.isEmpty()) {
             functionID += ", ";
@@ -158,7 +158,7 @@ public class Rivendell {
         Log.i(CORONA_TAG, msgType + functionID + errorMsg);
     }
 
-    private static boolean isSDKInitialized() {
+    private boolean isSDKInitialized() {
         // check to see if SDK is properly initialized
         if (coronaListener == CoronaLua.REFNIL) {
             logMsg(ERROR_MSG, "rivendell.init() must be called before calling other API functions");
@@ -174,7 +174,7 @@ public class Rivendell {
     }
 
     // dispatch a Lua event to our callback (dynamic handling of properties through map)
-    private static void dispatchLuaEvent(final Map<String, String> event) {
+    private void dispatchLuaEvent(final Map<String, String> event) {
         if (coronaRuntimeTaskDispatcher != null) {
             coronaRuntimeTaskDispatcher.send(runtime -> {
                 try {
@@ -216,7 +216,7 @@ public class Rivendell {
     // -------------------------------------------------------
 
     // [Lua] init(listener, options)
-    public static class Init implements NamedJavaFunction {
+    public class Init implements NamedJavaFunction {
         @Override
         public String getName() {
             return "init";
@@ -300,7 +300,7 @@ public class Rivendell {
     }
 
 
-    public static class SetGDPR implements NamedJavaFunction {
+    public class SetGDPR implements NamedJavaFunction {
 
         @Override
         public String getName() {
@@ -338,7 +338,7 @@ public class Rivendell {
         }
     }
 
-    public static class SetCCPA implements NamedJavaFunction {
+    public class SetCCPA implements NamedJavaFunction {
 
         @Override
         public String getName() {
@@ -376,7 +376,7 @@ public class Rivendell {
         }
     }
 
-    public static class SetCOPPA implements NamedJavaFunction {
+    public class SetCOPPA implements NamedJavaFunction {
 
         @Override
         public String getName() {
@@ -418,7 +418,7 @@ public class Rivendell {
      * ********************************************************************** */
 
     // [Lua] isBannerAdLoaded()
-    public static class IsBannerAdLoaded implements NamedJavaFunction {
+    public class IsBannerAdLoaded implements NamedJavaFunction {
         @Override
         public String getName() {
             return "isBannerAdLoaded";
@@ -450,7 +450,7 @@ public class Rivendell {
 
 
     // [Lua] showBannerAd()
-    public static class ShowBannerAd implements NamedJavaFunction {
+    public class ShowBannerAd implements NamedJavaFunction {
         @Override
         public String getName() {
             return "showBannerAd";
@@ -503,7 +503,7 @@ public class Rivendell {
 
 
     // [Lua] showBannerAdWithAlign()
-    public static class ShowBannerAdWithAlign implements NamedJavaFunction {
+    public class ShowBannerAdWithAlign implements NamedJavaFunction {
         @Override
         public String getName() {
             return "showBannerAdWithAlign";
@@ -649,7 +649,7 @@ public class Rivendell {
 
 
     // [Lua] dismissBannerAd()
-    public static class DismissBannerAd implements NamedJavaFunction {
+    public class DismissBannerAd implements NamedJavaFunction {
 
         @Override
         public String getName() {
@@ -683,7 +683,7 @@ public class Rivendell {
      * ********************************************************************** */
 
     // [Lua] isInterstitialAdLoaded()
-    public static class IsInterstitialAdLoaded implements NamedJavaFunction {
+    public class IsInterstitialAdLoaded implements NamedJavaFunction {
         @Override
         public String getName() {
             return "isInterstitialAdLoaded";
@@ -714,7 +714,7 @@ public class Rivendell {
     }
 
     // [Lua] showInterstitialAd()
-    public static class ShowInterstitialAd implements NamedJavaFunction {
+    public class ShowInterstitialAd implements NamedJavaFunction {
         @Override
         public String getName() {
             return "showInterstitialAd";
@@ -766,7 +766,7 @@ public class Rivendell {
      * ********************************************************************** */
 
     // [Lua] isRewardedAdLoaded()
-    public static class IsRewardedAdLoaded implements NamedJavaFunction {
+    public class IsRewardedAdLoaded implements NamedJavaFunction {
         @Override
         public String getName() {
             return "isRewardedAdLoaded";
@@ -797,7 +797,7 @@ public class Rivendell {
     }
 
     // [Lua] showRewardedAd()
-    public static class ShowRewardedAd implements NamedJavaFunction {
+    public class ShowRewardedAd implements NamedJavaFunction {
         @Override
         public String getName() {
             return "showRewardedAd";
@@ -849,7 +849,7 @@ public class Rivendell {
     // Delegates
     // -------------------------------------------------------------------
 
-    private static void initBannerAd() {
+    private void initBannerAd() {
         Yodo1Mas.getInstance().setBannerListener(new Yodo1Mas.BannerListener() {
             @Override
             public void onAdOpened(@NonNull Yodo1MasAdEvent event) {
@@ -893,7 +893,7 @@ public class Rivendell {
         });
     }
 
-    private static void initInterstitialAd() {
+    private void initInterstitialAd() {
         Yodo1Mas.getInstance().setInterstitialListener(new Yodo1Mas.InterstitialListener() {
             @Override
             public void onAdOpened(@NonNull Yodo1MasAdEvent event) {
@@ -937,7 +937,7 @@ public class Rivendell {
         });
     }
 
-    private static void initRewardedAd() {
+    private void initRewardedAd() {
         Yodo1Mas.getInstance().setRewardListener(new Yodo1Mas.RewardListener() {
             @Override
             public void onAdOpened(@NonNull Yodo1MasAdEvent event) {
