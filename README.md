@@ -1,5 +1,3 @@
-# Solar2dYodo1Plugin
-
 Solar2d Yodo1 MAS plugin<br>
 =====
 This is Android Rivendell plugin for Cordova.
