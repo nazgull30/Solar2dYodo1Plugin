@@ -13,11 +13,10 @@ First of all, you need download this repository.
 ## Platform SDK supported ##
 * latest Android, Min android sdk version: 19
 
-Take a look at offitial documetation [here](https://docs.coronalabs.com/native/android/index.html).
 
 In order to build Solar2d project you need to open android project in Android Studio.
 
-he project contains of two modules:
+The project contains of two modules:
 * app - application module.
 * plugin - module with MAS SDK plugin. LuaLoader class is an entry point for the plugin.
 
