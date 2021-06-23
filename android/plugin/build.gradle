@@ -18,7 +18,7 @@ afterEvaluate {
 
 dependencies {
     implementation ':Corona@aar'
-    implementation 'com.yodo1.mas:full:4.1.0'
+    implementation 'com.yodo1.mas:full:4.1.1'
 }
 
 task exportAARToThePluginBinary {
